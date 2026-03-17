@@ -1,4 +1,15 @@
 exports.handler = async function(event) {
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: ''
+    };
+  }
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -7,7 +18,7 @@ exports.handler = async function(event) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': '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',
+        'x-api-key': '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',
         'anthropic-version': '2023-06-01'
       },
       body: event.body
@@ -15,10 +26,17 @@ exports.handler = async function(event) {
     const data = await response.json();
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify(data)
     };
   } catch (err) {
-    return { statusCode: 500, body: JSON.stringify({ error: { message: err.message } }) };
+    return {
+      statusCode: 500,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: { message: err.message } })
+    };
   }
 };
